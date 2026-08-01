@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>منصة المسابقات الوظيفية – موريتانيا</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:#f0f4f8;direction:rtl;min-height:100vh;color:#1a202c}
+.app{max-width:640px;margin:0 auto;padding:1rem}
+.screen{display:none}.screen.active{display:block}
+.top-bar{background:linear-gradient(135deg,#1a5276,#2471a3);color:#fff;padding:1rem 1.5rem;border-radius:14px;margin-bottom:1.5rem;text-align:center}
+.top-bar .logo-icon{font-size:42px;margin-bottom:.35rem}
+.top-bar h1{font-size:22px;font-weight:700;margin-bottom:.15rem}
+.top-bar p{font-size:13px;opacity:.85}
+.card{background:#fff;border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.btn{display:block;width:100%;padding:.85rem;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s}
+.btn-primary{background:#1a5276;color:#fff}.btn-primary:hover{background:#154360}
+.btn-secondary{background:#eaf2ff;color:#1a5276;border:1.5px solid #2471a3}.btn-secondary:hover{background:#d6eaf8}
+.btn-success{background:#1e8449;color:#fff}.btn-success:hover{background:#196f3d}
+.btn-whatsapp{background:#25D366;color:#fff}.btn-whatsapp:hover{background:#1da851}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.spec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;margin-bottom:1rem}
+.spec-card{background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:.9rem .7rem;cursor:pointer;text-align:center;transition:all .15s}
+.spec-card:hover{border-color:#2471a3;background:#eaf2ff}
+.spec-card.selected{border-color:#1a5276;background:#1a5276;color:#fff}
+.spec-card.selected .spec-name{color:#fff}
+.spec-icon{font-size:26px;margin-bottom:.35rem}
+.spec-name{font-size:12px;font-weight:600;color:#2d3748;line-height:1.4}
+.q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
+.q-num{font-size:13px;color:#718096;font-weight:600}
+.q-spec{font-size:12px;color:#2471a3;background:#eaf2ff;padding:2px 10px;border-radius:20px}
+.progress-bar{height:6px;background:#e2e8f0;border-radius:3px;margin-bottom:1.25rem;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#2471a3,#1abc9c);border-radius:3px;transition:width .4s}
+.q-text{font-size:16px;font-weight:600;color:#1a202c;line-height:1.65;margin-bottom:1rem}
+.multi-hint{background:#fff3cd;border:1px solid #ffc107;color:#856404;border-radius:8px;padding:.5rem .85rem;font-size:13px;margin-bottom:.85rem;display:none;align-items:center;gap:.5rem}
+.choice-btn{display:block;width:100%;text-align:right;padding:.75rem 1rem;background:#f7fafc;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;color:#2d3748;cursor:pointer;margin-bottom:.6rem;transition:all .15s;line-height:1.5}
+.choice-btn:hover{border-color:#2471a3;background:#eaf2ff}
+.choice-btn.selected{border-color:#2471a3;background:#eaf2ff;color:#1a5276;font-weight:600}
+.result-hero{text-align:center;padding:1.75rem 1rem;background:linear-gradient(135deg,#1a5276,#2471a3);color:#fff;border-radius:14px;margin-bottom:1rem}
+.score-big{font-size:60px;font-weight:700;line-height:1}
+.score-denom{font-size:22px;opacity:.8}
+.score-pct{font-size:20px;margin-top:.4rem;opacity:.9}
+.score-badge{display:inline-block;margin-top:.75rem;padding:.35rem 1.25rem;border-radius:20px;font-size:13px;font-weight:700}
+.badge-excellent{background:#1abc9c;color:#fff}
+.badge-good{background:#f39c12;color:#fff}
+.badge-fail{background:#e74c3c;color:#fff}
+.review-item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:.85rem 1rem;margin-bottom:.6rem}
+.review-q{font-size:13px;font-weight:600;color:#2d3748;margin-bottom:.5rem;line-height:1.5}
+.review-row{display:flex;gap:.5rem;align-items:flex-start;margin-top:.3rem;flex-wrap:wrap}
+.tag{padding:3px 10px;border-radius:5px;font-size:11px;font-weight:700;white-space:nowrap}
+.tag-ok{background:#d4efdf;color:#1e8449}
+.tag-err{background:#fce4e4;color:#c0392b}
+.tag-corr{background:#d6eaf8;color:#1a5276}
+.review-text{font-size:12px;color:#4a5568;line-height:1.5}
+.payment-card{background:linear-gradient(135deg,#1a5276,#154360);color:#fff;border-radius:14px;padding:1.5rem;text-align:center;margin:1rem 0}
+.payment-card h3{font-size:16px;font-weight:600;opacity:.9;margin-bottom:.35rem}
+.amount-big{font-size:38px;font-weight:700;margin:.25rem 0}
+.amount-cur{font-size:16px;opacity:.8}
+.pay-methods{display:flex;gap:.6rem;justify-content:center;margin:1rem 0;flex-wrap:wrap}
+.pay-badge{background:rgba(255,255,255,.2);color:#fff;padding:.4rem 1rem;border-radius:8px;font-size:14px;font-weight:600}
+.pay-phone{font-size:26px;font-weight:700;letter-spacing:.08em;margin-top:.5rem}
+.code-input{width:100%;padding:.85rem 1rem;border:2px solid #e2e8f0;border-radius:10px;font-size:20px;text-align:center;letter-spacing:.2em;font-weight:700;color:#1a5276;background:#f7fafc;outline:none;transition:border-color .15s;margin-bottom:.75rem}
+.code-input:focus{border-color:#2471a3;background:#eaf2ff}
+.error-msg{color:#c0392b;font-size:13px;text-align:center;min-height:20px;margin-bottom:.5rem;font-weight:600}
+.success-msg{color:#1e8449;font-size:13px;text-align:center;min-height:20px;margin-bottom:.5rem;font-weight:600}
+.back-btn{background:none;border:none;color:#2471a3;font-size:14px;cursor:pointer;padding:.35rem 0;margin-bottom:1rem;display:flex;align-items:center;gap:.35rem;font-weight:600}
+.section-title{font-size:18px;font-weight:700;color:#1a5276;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px solid #eaf2ff}
+.phase-badge{display:inline-block;background:#eaf2ff;color:#1a5276;font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;margin-bottom:.75rem}
+.divider{height:1px;background:#e2e8f0;margin:1rem 0}
+.info-box{background:#eaf2ff;border:1px solid #aed6f1;border-radius:10px;padding:.85rem 1rem;font-size:13px;color:#1a5276;margin-bottom:1rem;line-height:1.6}
+.loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,.92);display:none;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:1rem}
+.spinner{width:40px;height:40px;border:4px solid #e2e8f0;border-top:4px solid #2471a3;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.footer{text-align:center;font-size:11px;color:#a0aec0;margin-top:2rem;padding:.75rem}
+@media(max-width:420px){.spec-grid{grid-template-columns:repeat(2,1fr)}.score-big{font-size:48px}}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div style="color:#1a5276;font-weight:600;font-size:15px">جاري التحقق...</div>
+</div>
+
+<div class="app">
+
+<!-- HOME -->
+<div class="screen active" id="s-home">
+  <div class="top-bar">
+    <div class="logo-icon">🎓</div>
+    <h1>منصة المسابقات الوظيفية</h1>
+    <p>موريتانيا · تدريب وتقييم وطني</p>
+  </div>
+  <div class="card">
+    <p style="font-size:15px;color:#4a5568;line-height:1.7;margin-bottom:1.25rem">
+      استعد لمسابقات الوظيفة العمومية مع اختبارات مخصصة لكل تخصص، مع تصحيح فوري وشرح الإجابات.
+    </p>
+    <button class="btn btn-primary" onclick="show('s-spec')">ابدأ المسابقة المجانية (50 سؤالاً) ←</button>
+    <div style="margin-top:.75rem;text-align:center">
+      <button class="back-btn" style="display:inline-flex;color:#718096;font-size:13px;margin:0 auto" onclick="show('s-activate')">
+        لديك كود تفعيل؟ انقر هنا
+      </button>
+    </div>
+  </div>
+  <div class="footer">منصة المسابقات الوظيفية · موريتانيا © 2025</div>
+</div>
+
+<!-- SPECIALTY -->
+<div class="screen" id="s-spec">
+  <button class="back-btn" onclick="show('s-home')">← رجوع</button>
+  <div class="card">
+    <div class="section-title">اختر تخصصك</div>
+    <div class="spec-grid" id="spec-grid"></div>
+    <button class="btn btn-primary" id="spec-next" disabled onclick="startPhase1()">ابدأ الاختبار المجاني – 50 سؤالاً</button>
+  </div>
+</div>
+
+<!-- QUIZ 1 -->
+<div class="screen" id="s-quiz1">
+  <div class="card">
+    <span class="phase-badge">المرحلة الأولى – مجاني</span>
+    <div class="q-meta">
+      <span class="q-num" id="q1-count">سؤال 1 من 50</span>
+      <span class="q-spec" id="q1-spec-lbl"></span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="q1-bar" style="width:2%"></div></div>
+    <div class="q-text" id="q1-text"></div>
+    <div class="multi-hint" id="q1-hint">⚠️ يوجد أكثر من إجابة صحيحة</div>
+    <div id="q1-choices"></div>
+    <button class="btn btn-primary" id="q1-next" disabled onclick="nextQ(1)" style="margin-top:.75rem">التالي ←</button>
+  </div>
+</div>
+
+<!-- RESULT 1 -->
+<div class="screen" id="s-result1">
+  <div class="result-hero">
+    <div style="font-size:14px;opacity:.85;margin-bottom:.5rem">نتيجة المرحلة الأولى</div>
+    <div><span class="score-big" id="r1-score">40</span><span class="score-denom"> / 50</span></div>
+    <div class="score-pct" id="r1-pct">80%</div>
+    <div id="r1-badge"></div>
+  </div>
+  <div class="card">
+    <div class="section-title">مراجعة الإجابات</div>
+    <div id="r1-review"></div>
+  </div>
+  <div class="payment-card">
+    <h3>لإكمال الاختبار الكامل يجب دفع</h3>
+    <div class="amount-big">500</div>
+    <div class="amount-cur">أوقية جديدة</div>
+    <div style="font-size:13px;opacity:.8;margin-top:.75rem">عبر</div>
+    <div class="pay-methods">
+      <span class="pay-badge">💳 بنكيلي</span>
+      <span class="pay-badge">🏧 سداد</span>
+      <span class="pay-badge">🏦 مصرفي</span>
+    </div>
+    <div style="font-size:13px;opacity:.8">على الرقم</div>
+    <div class="pay-phone">44003940</div>
+    <button class="btn btn-whatsapp" style="margin-top:1rem" onclick="openWhatsapp()">✅ أرسلت المبلغ – تواصل عبر واتساب</button>
+  </div>
+  <button class="btn btn-secondary" onclick="show('s-activate')">🔑 أدخل كود التفعيل</button>
+  <div style="margin-top:.75rem">
+    <button class="btn btn-secondary" onclick="show('s-spec')">🔄 إعادة الاختبار بأسئلة مختلفة</button>
+  </div>
+</div>
+
+<!-- ACTIVATION -->
+<div class="screen" id="s-activate">
+  <button class="back-btn" onclick="show('s-home')">← رجوع</button>
+  <div class="top-bar" style="margin-bottom:1rem">
+    <div class="logo-icon">🔑</div>
+    <h1>تفعيل الاختبار الكامل</h1>
+    <p>أدخل الكود الذي أرسله إليك المسؤول</p>
+  </div>
+  <div class="card">
+    <div class="info-box">
+      <b>ملاحظة:</b> كود التفعيل شخصي لك وحدك ومرتبط بجهازك. يمكنك الدخول به متى شئت والحصول على <b>50 سؤالاً جديدة</b> في كل مرة. لا يمكن لأي شخص آخر استخدام نفس الكود.
+    </div>
+    <input class="code-input" id="code-input" placeholder="مثال: KD88X9" maxlength="6"
+      oninput="this.value=this.value.toUpperCase();document.getElementById('code-error').textContent=''" />
+    <div class="error-msg" id="code-error"></div>
+    <div class="success-msg" id="code-success"></div>
+    <button class="btn btn-primary" onclick="activateCode()">تفعيل الكود والدخول</button>
+    <div class="divider"></div>
+    <p style="font-size:12px;color:#718096;text-align:center;line-height:1.6">بعد إرسال المبلغ عبر واتساب، سيتحقق المسؤول ويرسل لك الكود.</p>
+  </div>
+</div>
+
+<!-- QUIZ 2 -->
+<div class="screen" id="s-quiz2">
+  <div class="card">
+    <span class="phase-badge" style="background:#d4efdf;color:#1e8449">المرحلة الثانية – مستوى متقدم</span>
+    <div class="q-meta">
+      <span class="q-num" id="q2-count">سؤال 1 من 50</span>
+      <span class="q-spec" id="q2-spec-lbl"></span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="q2-bar" style="width:2%"></div></div>
+    <div class="q-text" id="q2-text"></div>
+    <div class="multi-hint" id="q2-hint">⚠️ يوجد أكثر من إجابة صحيحة</div>
+    <div id="q2-choices"></div>
+    <button class="btn btn-success" id="q2-next" disabled onclick="nextQ(2)" style="margin-top:.75rem">التالي ←</button>
+  </div>
+</div>
+
+<!-- RESULT 2 -->
+<div class="screen" id="s-result2">
+  <div class="result-hero" style="background:linear-gradient(135deg,#1e8449,#138d75)">
+    <div style="font-size:14px;opacity:.85;margin-bottom:.5rem">نتيجة الاختبار الكامل</div>
+    <div><span class="score-big" id="r2-score">40</span><span class="score-denom" id="r2-denom"> / 50</span></div>
+    <div class="score-pct" id="r2-pct">80%</div>
+    <div id="r2-badge"></div>
+  </div>
+  <div class="card">
+    <div class="info-box">✅ يمكنك الدخول مرة أخرى بنفس الكود للحصول على <b>50 سؤالاً جديدة</b>.</div>
+  </div>
+  <div class="card">
+    <div class="section-title">مراجعة الإجابات</div>
+    <div id="r2-review"></div>
+  </div>
+  <button class="btn btn-success" onclick="retakePhase2()" style="margin-bottom:.75rem">🔄 أعد الاختبار بأسئلة جديدة</button>
+  <button class="btn btn-secondary" onclick="show('s-home')">العودة للرئيسية</button>
+</div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// SUPABASE CONFIG — REST API مباشرة
+// ══════════════════════════════════════════
+const SUPA_URL = 'https://qhebrhrmvpghgywyxgua.supabase.co';
+const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoZWJyaHJtdnBnaGd5d3l4Z3VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NjA0MzQsImV4cCI6MjA2NDQzNjQzNH0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+
+// REST helpers
+async function dbSelect(table, filters) {
+  let url = `${SUPA_URL}/rest/v1/${table}?`;
+  Object.entries(filters).forEach(([k,v]) => url += `${k}=eq.${encodeURIComponent(v)}&`);
+  url += 'limit=1';
+  const r = await fetch(url, {
+    headers: {
+      'apikey': ANON_KEY,
+      'Authorization': `Bearer ${ANON_KEY}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  const data = await r.json();
+  return Array.isArray(data) && data.length > 0 ? data[0] : null;
+}
+
+async function dbUpdate(table, filters, updates) {
+  let url = `${SUPA_URL}/rest/v1/${table}?`;
+  Object.entries(filters).forEach(([k,v]) => url += `${k}=eq.${encodeURIComponent(v)}&`);
+  const r = await fetch(url, {
+    method: 'PATCH',
+    headers: {
+      'apikey': ANON_KEY,
+      'Authorization': `Bearer ${ANON_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify(updates)
+  });
+  return r.ok;
+}
+
+// Device ID
+function getDeviceId() {
+  let id = localStorage.getItem('mq_device_id');
+  if (!id) {
+    id = 'dev_' + Date.now() + '_' + Math.random().toString(36).slice(2,10);
+    localStorage.setItem('mq_device_id', id);
+  }
+  return id;
+}
+
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const PHONE = "22244003940";
+const SPECIALTIES = [
+  {id:"KD",name:"كاتب ضبط رئيسي",icon:"📋"},
+  {id:"KB",name:"كتاب ضبط",icon:"📝"},
+  {id:"MK",name:"مفتش خزينة رئيسي",icon:"🏦"},
+  {id:"MD",name:"مفتش ضرائب",icon:"📊"},
+  {id:"MQ",name:"مراقب خزينة",icon:"💼"},
+  {id:"MR",name:"مراقب ضرائب",icon:"🔍"},
+  {id:"QN",name:"قانونيين",icon:"⚖️"},
+  {id:"MU",name:"محرر إدارة",icon:"🖊️"},
+  {id:"MI",name:"مكون إشارة وبرايل",icon:"♿"},
+  {id:"MN",name:"مكون للترقية النسوية",icon:"👥"},
+  {id:"MH",name:"مراقب حدائق أطفال",icon:"🌳"},
+  {id:"MS",name:"مفوض شباب",icon:"🤝"},
+];
+
+const QBANKS = {
+  KD:[
+    {q:"ما هو دور كاتب الضبط الرئيسي في الجلسات القضائية؟",opts:["تحرير المحاضر","إصدار الأحكام","تمثيل المدعي العام","الدفاع عن المتهم"],correct:[0]},
+    {q:"أي من الوثائق التالية يُعدّ محضراً رسمياً؟",opts:["مذكرة داخلية","محضر جلسة","رسالة إدارية","تقرير تقني"],correct:[1]},
+    {q:"ما هي مدة حفظ الوثائق القضائية وفق التشريع الموريتاني؟",opts:["5 سنوات","10 سنوات","20 سنة","30 سنة"],correct:[2]},
+    {q:"يُعدّ كاتب الضبط مسؤولاً عن:",opts:["حفظ السجلات","تنفيذ الأحكام","الفصل في النزاعات","أ و ب معاً"],correct:[3]},
+    {q:"ما المقصود بمبدأ علنية الجلسات؟",opts:["سرية المداولات","انفتاح الجلسات على الجمهور","حضور الصحفيين فقط","خصوصية الملفات"],correct:[1]},
+    {q:"يُحرَّر محضر الجلسة باللغة:",opts:["العربية فقط","الفرنسية فقط","لغتين رسميتين","لغة المتقاضي"],correct:[0]},
+    {q:"من يوقّع على محضر الجلسة؟",opts:["القاضي فقط","كاتب الضبط فقط","القاضي وكاتب الضبط","رئيس المحكمة وحده"],correct:[2]},
+    {q:"ما الفرق الرئيسي بين الأرشيف الإداري والأرشيف القضائي؟",opts:["لا فرق بينهما","مدة الحفظ فقط","الجهة المسؤولة فقط","المدة والجهة معاً"],correct:[3]},
+    {q:"أي من الإجراءات التالية صحيح عند استلام ملف جديد؟",opts:["الترقيم فقط","الفرز فقط","التسجيل فقط","جميع ما سبق"],correct:[3]},
+    {q:"يُقصد بالتبليغ القضائي:",opts:["إعلام الأطراف بالإجراءات","توثيق الوثائق","أرشفة الملفات","إصدار الحكم"],correct:[0]},
+    {q:"متى يكون الحكم غيابياً؟",opts:["عند غياب القاضي","عند غياب أحد الأطراف","عند غياب المحامين","عند غياب الشهود"],correct:[1]},
+    {q:"ما هي وثيقة تنفيذ الأحكام؟",opts:["صورة تنفيذية","محضر التبليغ","قرار الإحالة","وثيقة الطعن"],correct:[0]},
+    {q:"في حال فقدان ملف قضائي يجب على كاتب الضبط:",opts:["تجاهل الأمر","إعداد محضر فقدان فقط","إبلاغ القاضي فوراً فقط","إبلاغ القاضي وإعداد محضر"],correct:[3]},
+    {q:"ما هي مراحل الطعن في الأحكام المدنية؟",opts:["الاستئناف فقط","النقض فقط","الاعتراض فقط","الاستئناف والنقض"],correct:[3]},
+    {q:"ما المقصود بالاختصاص النوعي للمحكمة؟",opts:["اختصاصها بنوع معين من القضايا","الاختصاص الإقليمي","اختصاص القاضي المنفرد","درجة التقاضي"],correct:[0]},
+    {q:"ما هو أجل الطعن بالاستئناف في الأحكام المدنية الموريتانية؟",opts:["15 يوماً","30 يوماً","60 يوماً","3 أشهر"],correct:[1]},
+    {q:"أي من التالي يعدّ من مبادئ العدالة الناجزة؟",opts:["السرعة فقط","المساواة فقط","التحقيق فقط","جميع ما سبق"],correct:[3]},
+    {q:"ما هو دور النيابة العامة في الدعوى الجنائية؟",opts:["تمثيل المتهم","تحريك الدعوى العمومية","إصدار الحكم","تنفيذ الحكم"],correct:[1]},
+    {q:"ما هي المدة القانونية للاحتجاز الاحتياطي في القانون الموريتاني؟",opts:["24 ساعة","48 ساعة","72 ساعة","أسبوع"],correct:[1]},
+    {q:"ما المقصود بالحكم الابتدائي؟",opts:["الحكم النهائي","حكم أول درجة","حكم الاستئناف","حكم النقض"],correct:[1]},
+    {q:"يُعدّ الاستئناف:",opts:["طعناً عادياً","طعناً غير عادي","دعوى جديدة","إجراء تنفيذياً"],correct:[0]},
+    {q:"ما هي الجهة المختصة بالتحقيق الابتدائي في الجرائم الجسيمة؟",opts:["النيابة العامة","قاضي التحقيق","المحكمة الابتدائية","محكمة الاستئناف"],correct:[1]},
+    {q:"يُقصد بالتعويض المدني:",opts:["عقوبة جنائية","جبر الضرر الناتج عن الفعل","غرامة إدارية","تدبير احترازي"],correct:[1]},
+    {q:"ما المقصود بمبدأ قرينة البراءة؟",opts:["المتهم بريء حتى تثبت إدانته","المتهم مذنب بمجرد الاتهام","الشك لصالح المجني عليه","غياب الدليل يعني البراءة"],correct:[0]},
+    {q:"ما هي مهمة كاتب الضبط خلال التحقيق القضائي؟",opts:["توجيه القاضي","تدوين التصريحات والوقائع","الحكم في القضية","تمثيل الأطراف"],correct:[1]},
+    {q:"يُلزم كاتب الضبط بالسر المهني بموجب:",opts:["قانون الإجراءات فقط","النظام الأساسي فقط","قانون العقوبات فقط","قوانين متعددة"],correct:[3]},
+    {q:"ما المقصود بالإجراءات الوقتية في القانون المدني؟",opts:["إجراءات مؤقتة لحماية حق","الإجراءات الشكلية","التدابير التنفيذية","إجراءات الطعن"],correct:[0]},
+    {q:"أي من التالي يُعدّ من الجرائم الجنائية الكبرى وفق القانون الموريتاني؟",opts:["السرقة البسيطة","الاختلاس","المخالفات الإدارية","الغياب عن العمل"],correct:[1]},
+    {q:"ما هو مبدأ المواجهة في الإجراءات القضائية؟",opts:["سرية المرافعات","إطلاع كل طرف على حجج الطرف الآخر","غياب المحامي","التقاضي عن بُعد"],correct:[1]},
+    {q:"ما الفرق بين البطلان المطلق والبطلان النسبي؟",opts:["لا فرق","المطلق لمصلحة عامة والنسبي لمصلحة خاصة","المطلق أخف","النسبي أوسع"],correct:[1]},
+  ],
+  default:[
+    {q:"ما هو الإطار القانوني الأساسي للوظيفة العمومية في موريتانيا؟",opts:["قانون 93-09","قانون 2004-017","قانون 2010-032","لائحة 99-05"],correct:[1]},
+    {q:"ما مدة فترة التجربة للموظف الجديد في الإدارة العمومية؟",opts:["3 أشهر","6 أشهر","سنة كاملة","سنتان"],correct:[2]},
+    {q:"أي من المبادئ التالية يحكم العمل الإداري؟",opts:["الشفافية فقط","المساواة فقط","المشروعية فقط","جميع ما سبق"],correct:[3]},
+    {q:"ما المقصود بالتسلسل الإداري؟",opts:["ترتيب المهام اليومية","الهرمية الوظيفية","التنسيق بين الإدارات","أرشفة الوثائق"],correct:[1]},
+    {q:"يُقصد بمبدأ الاستمرارية في المرفق العام:",opts:["انقطاع الخدمة أحياناً","استمرار الخدمة دون توقف","المرونة في التسيير","الرقابة الدورية فقط"],correct:[1]},
+    {q:"من هو الجهاز الأعلى للرقابة المالية في موريتانيا؟",opts:["المفتشية العامة","محكمة الحسابات","الخزينة العامة","البنك المركزي"],correct:[1]},
+    {q:"ما هي مراحل تنفيذ النفقة العمومية بالترتيب الصحيح؟",opts:["الالتزام والتصفية والأمر بالصرف والدفع","الميزانية والتخصيص والصرف","التخطيط والتنفيذ والمراجعة","الترخيص والدفع فقط"],correct:[0]},
+    {q:"ما المقصود بالتصفية في الإجراءات المالية؟",opts:["إلغاء الاعتمادات","التحقق من صحة الحق وتحديد مبلغه","الأمر بالصرف","تحصيل الإيرادات"],correct:[1]},
+    {q:"ما مفهوم مبدأ الفصل بين الآمر بالصرف والمحاسب؟",opts:["اتحاد السلطتين","الفصل لضمان الرقابة المتبادلة","تفويض الصلاحيات","مركزية القرار"],correct:[1]},
+    {q:"أي نوع من الرقابة يُمارسها المحاسب العمومي؟",opts:["رقابة ملاءمة","رقابة مشروعية","رقابة أداء","رقابة ميزانية"],correct:[1]},
+    {q:"ما هو مبدأ المشروعية في القانون الإداري؟",opts:["الإدارة تتصرف وفق القانون","الإدارة فوق القانون","سلطة تقديرية مطلقة","عدم مساءلة الإدارة"],correct:[0]},
+    {q:"ما المقصود بالمرفق العام في القانون الإداري؟",opts:["نشاط خاص","نشاط عام لتلبية حاجة عامة","شركة حكومية","مؤسسة تعليمية فقط"],correct:[1]},
+    {q:"أي من التالي يُعدّ مبدأً أساسياً في المرفق العام؟",opts:["الاستمرارية فقط","المساواة فقط","التكيّف فقط","جميع ما سبق"],correct:[3]},
+    {q:"ما هو الفرق بين القرار الإداري الفردي والتنظيمي؟",opts:["لا فرق","الفردي لشخص والتنظيمي للعموم","الفردي أسمى","التنظيمي سري"],correct:[1]},
+    {q:"ما هي مدة التقادم في دعاوى الإلغاء الإداري؟",opts:["شهر","3 أشهر","6 أشهر","سنة"],correct:[1]},
+    {q:"ما هي الجهة المختصة بالنظر في النزاعات الإدارية في موريتانيا؟",opts:["المحاكم الابتدائية","محكمة الاستئناف","المحكمة العليا","المحاكم الولائية"],correct:[2]},
+    {q:"ما المقصود بالسلطة التقديرية للإدارة؟",opts:["حرية الإدارة في اختيار الوسيلة","التصرف خارج القانون","التملص من المسؤولية","إلغاء القرارات"],correct:[0]},
+    {q:"أي المستندات التالية يُعدّ سنداً للصرف؟",opts:["أمر المهمة","كشف الأجور","الفاتورة المصادق عليها","جميع ما سبق"],correct:[3]},
+    {q:"ما هي عقوبة الغدر في قانون العقوبات الموريتاني؟",opts:["غرامة مالية فقط","السجن 2 إلى 5 سنوات","السجن 5 إلى 10 سنوات","الإعدام"],correct:[2]},
+    {q:"ما الفرق بين الاختصاص النوعي والمكاني في القانون الإداري؟",opts:["النوعي=الموضوع والمكاني=الإقليم","النوعي=الإقليم والمكاني=الموضوع","كلاهما إقليمي","لا فرق"],correct:[0]},
+    {q:"ما هو مبدأ المساواة أمام المرفق العام؟",opts:["تمييز المستفيدين","تساوي المستفيدين في الخدمة","تفضيل الموظفين","الأولوية للمواطنين"],correct:[1]},
+    {q:"ما هي رقابة التأشير المسبق؟",opts:["رقابة لاحقة للصرف","رقابة قبل تنفيذ العملية المالية","رقابة قضائية","رقابة برلمانية"],correct:[1]},
+    {q:"ما المقصود بالتفويض في الوظيفة العمومية؟",opts:["نقل الصلاحيات لشخص آخر","التخلي عن المنصب","الغياب المؤقت","الاستقالة"],correct:[0]},
+    {q:"أي من التالي يُعدّ خطأ مرفقياً؟",opts:["خطأ شخصي بحت","إهمال في أداء الخدمة العامة","جريمة مدنية","خطأ في الحياة الخاصة"],correct:[1]},
+    {q:"ما هي أنواع الرقابة على الإدارة العامة؟",opts:["رقابة إدارية فقط","رقابة قضائية فقط","رقابة برلمانية فقط","جميع الأنواع السابقة"],correct:[3]},
+    {q:"ما المقصود بالتراتبية الإدارية؟",opts:["ترتيب الوثائق","تسلسل السلطة من الأعلى للأدنى","تنظيم الجلسات","ترتيب الاجتماعات"],correct:[1]},
+    {q:"ما هي مدة العقد الإداري المؤقت في الوظيفة العمومية الموريتانية؟",opts:["3 أشهر قابلة للتجديد مرة","6 أشهر قابلة للتجديد","سنة قابلة للتجديد","سنتان"],correct:[1]},
+    {q:"ما الجهة التي تتولى معالجة طعون الموظفين الإداريين؟",opts:["المحكمة الجنائية","مجلس الشورى","لجنة الطعون الإدارية","المحكمة التجارية"],correct:[2]},
+    {q:"ما هو الفرق بين العقوبة التأديبية والجنائية للموظف العام؟",opts:["لا فرق","التأديبية مهنية والجنائية قضائية","التأديبية أشد","الجنائية داخلية"],correct:[1]},
+    {q:"ما المقصود بنظام الجدارة في التوظيف العمومي؟",opts:["التوظيف بالمحاباة","التوظيف على أساس الكفاءة والمسابقة","التوظيف السياسي","التوظيف العشوائي"],correct:[1]},
+    {q:"ما هي صلاحيات المفتشية العامة للإدارة؟",opts:["إصدار الأحكام","الرقابة والتفتيش على أجهزة الدولة","تحصيل الضرائب","إدارة الخزينة"],correct:[1]},
+  ]
+};
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let S = {
+  spec:null,
+  p1q:[],p1i:0,p1sel:[],p1scores:[],
+  p2q:[],p2i:0,p2sel:[],p2scores:[],
+  activeCode:null,activeSpecId:null,
+};
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function setLoading(on){document.getElementById('loading').style.display=on?'flex':'none'}
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b}
+function getBank(id){return QBANKS[id]||QBANKS.default}
+function getQuestions(specId,count){
+  const bank=getBank(specId);
+  return shuffle(bank).slice(0,Math.min(count,bank.length)).map(q=>{
+    const idx=q.opts.map((o,i)=>({text:o,orig:i}));
+    const sh=shuffle(idx);
+    return{q:q.q,opts:sh.map(o=>o.text),correct:q.correct.map(ci=>sh.findIndex(o=>o.orig===ci))};
+  });
+}
+function isCorrect(q,sel){
+  if(q.correct.length>1){if(!Array.isArray(sel)||!sel.length)return false;return[...sel].sort().join(',')====[...q.correct].sort().join(',');}
+  return Array.isArray(sel)?sel.includes(q.correct[0]):q.correct.includes(sel);
+}
+function selLabel(q,sel){
+  if(sel===null||sel===undefined)return'لم تجب';
+  if(Array.isArray(sel))return sel.length?sel.map(i=>q.opts[i]).join('، '):'لم تجب';
+  return q.opts[sel]??'لم تجب';
+}
+function badgeFor(s,t){const p=Math.round(s/t*100);if(p>=80)return{cls:'badge-excellent',text:'ممتاز 🏆'};if(p>=60)return{cls:'badge-good',text:'جيد 👍'};return{cls:'badge-fail',text:'يحتاج مراجعة 📚'}}
+function buildReview(qs,sels,scores,el){
+  el.innerHTML='';
+  qs.forEach((q,i)=>{
+    const ok=scores[i];const d=document.createElement('div');d.className='review-item';
+    d.innerHTML=`<div class="review-q">${i+1}. ${q.q}</div>
+      <div class="review-row"><span class="tag ${ok?'tag-ok':'tag-err'}">${ok?'✔ صحيح':'✖ خطأ'}</span>
+      <span class="review-text">إجابتك: ${selLabel(q,sels[i])}</span></div>
+      ${!ok?`<div class="review-row"><span class="tag tag-corr">الصواب</span><span class="review-text">${q.correct.map(ci=>q.opts[ci]).join('، ')}</span></div>`:''}`;
+    el.appendChild(d);
+  });
+}
+
+// Build grid
+const grid=document.getElementById('spec-grid');
+SPECIALTIES.forEach(sp=>{
+  const c=document.createElement('div');c.className='spec-card';
+  c.innerHTML=`<div class="spec-icon">${sp.icon}</div><div class="spec-name">${sp.name}</div>`;
+  c.onclick=()=>{document.querySelectorAll('.spec-card').forEach(x=>x.classList.remove('selected'));c.classList.add('selected');S.spec=sp;document.getElementById('spec-next').disabled=false;};
+  grid.appendChild(c);
+});
+
+// ══════════════════════════════════════════
+// PHASE 1
+// ══════════════════════════════════════════
+function startPhase1(){
+  if(!S.spec)return;
+  S.p1q=getQuestions(S.spec.id,50);S.p1i=0;S.p1sel=[];S.p1scores=[];
+  show('s-quiz1');renderQ(1);
+}
+
+function renderQ(ph){
+  const qs=ph===1?S.p1q:S.p2q;
+  const i=ph===1?S.p1i:S.p2i;
+  const q=qs[i];const total=qs.length;const multi=q.correct.length>1;
+  document.getElementById(`q${ph}-count`).textContent=`سؤال ${i+1} من ${total}`;
+  const spName=S.spec?S.spec.name:(SPECIALTIES.find(s=>s.id===S.activeSpecId)||{name:''}).name;
+  document.getElementById(`q${ph}-spec-lbl`).textContent=spName;
+  document.getElementById(`q${ph}-bar`).style.width=`${Math.round((i+1)/total*100)}%`;
+  document.getElementById(`q${ph}-text`).textContent=q.q;
+  const hint=document.getElementById(`q${ph}-hint`);hint.style.display=multi?'flex':'none';
+  if(ph===1)S.p1sel[i]=multi?[]:null;else S.p2sel[i]=multi?[]:null;
+  const box=document.getElementById(`q${ph}-choices`);box.innerHTML='';
+  const labels=['أ','ب','ج','د'];
+  q.opts.forEach((opt,oi)=>{
+    const btn=document.createElement('button');btn.className='choice-btn';
+    btn.textContent=`${labels[oi]}. ${opt}`;
+    btn.onclick=()=>{
+      const sel=ph===1?S.p1sel:S.p2sel;
+      if(multi){if(!Array.isArray(sel[i]))sel[i]=[];const idx=sel[i].indexOf(oi);if(idx===-1)sel[i].push(oi);else sel[i].splice(idx,1);box.querySelectorAll('.choice-btn').forEach((b,bi)=>b.classList.toggle('selected',sel[i].includes(bi)));}
+      else{sel[i]=oi;box.querySelectorAll('.choice-btn').forEach((b,bi)=>b.classList.toggle('selected',bi===oi));}
+      document.getElementById(`q${ph}-next`).disabled=false;
+    };
+    box.appendChild(btn);
+  });
+  document.getElementById(`q${ph}-next`).disabled=true;
+}
+
+function nextQ(ph){
+  const qs=ph===1?S.p1q:S.p2q;const sels=ph===1?S.p1sel:S.p2sel;const scores=ph===1?S.p1scores:S.p2scores;
+  const i=ph===1?S.p1i:S.p2i;scores.push(isCorrect(qs[i],sels[i]));
+  if(ph===1)S.p1i++;else S.p2i++;
+  const ni=ph===1?S.p1i:S.p2i;
+  if(ni<qs.length)renderQ(ph);else ph===1?showResult1():showResult2();
+}
+
+function showResult1(){
+  const score=S.p1scores.filter(Boolean).length;const total=S.p1q.length;
+  document.getElementById('r1-score').textContent=score;
+  document.getElementById('r1-pct').textContent=`النسبة: ${Math.round(score/total*100)}%`;
+  const b=badgeFor(score,total);document.getElementById('r1-badge').innerHTML=`<span class="score-badge ${b.cls}">${b.text}</span>`;
+  buildReview(S.p1q,S.p1sel,S.p1scores,document.getElementById('r1-review'));show('s-result1');
+}
+
+function openWhatsapp(){
+  const spec=S.spec?S.spec.name:'';
+  const msg=encodeURIComponent(`السلام عليكم\n\nلقد أرسلت مبلغ 500 أوقية.\n\nاسمي: \nالتخصص: ${spec}`);
+  window.open(`https://wa.me/${PHONE}?text=${msg}`,'_blank');
+}
+
+// ══════════════════════════════════════════
+// ACTIVATION — Supabase REST API
+// ══════════════════════════════════════════
+async function activateCode(){
+  const code=document.getElementById('code-input').value.trim().toUpperCase();
+  const errEl=document.getElementById('code-error');const okEl=document.getElementById('code-success');
+  errEl.textContent='';okEl.textContent='';
+  if(!code){errEl.textContent='الرجاء إدخال الكود.';return}
+  setLoading(true);
+  try{
+    const row=await dbSelect('activation_codes',{code});
+    if(!row){errEl.textContent='الكود غير صحيح. تحقق وأعد المحاولة.';setLoading(false);return}
+    const deviceId=getDeviceId();const specId=row.spec_id;
+    if(S.spec&&S.spec.id!==specId){
+      const sn=SPECIALTIES.find(s=>s.id===specId)?.name||specId;
+      errEl.textContent=`هذا الكود مخصص لتخصص "${sn}".`;setLoading(false);return;
+    }
+    if(row.device_id){
+      if(row.device_id===deviceId){
+        okEl.textContent='✅ مرحباً بعودتك! جاري تحميل أسئلة جديدة...';
+        S.activeCode=code;S.activeSpecId=specId;
+        S.spec=S.spec||SPECIALTIES.find(s=>s.id===specId)||{id:specId,name:specId,icon:'📌'};
+        setLoading(false);setTimeout(()=>launchPhase2(specId),700);
+      }else{
+        errEl.textContent='هذا الكود مرتبط بجهاز آخر ولا يمكن استخدامه هنا.';setLoading(false);
+      }
+    }else{
+      const ok=await dbUpdate('activation_codes',{code},{device_id:deviceId,activated_at:new Date().toISOString()});
+      if(!ok){errEl.textContent='خطأ في التفعيل، حاول مرة أخرى.';setLoading(false);return}
+      okEl.textContent='✅ تم التفعيل بنجاح! الكود مرتبط الآن بجهازك.';
+      S.activeCode=code;S.activeSpecId=specId;
+      S.spec=S.spec||SPECIALTIES.find(s=>s.id===specId)||{id:specId,name:specId,icon:'📌'};
+      setLoading(false);setTimeout(()=>launchPhase2(specId),900);
+    }
+  }catch(e){errEl.textContent='خطأ في الاتصال. تحقق من الإنترنت.';setLoading(false);}
+}
+
+function launchPhase2(specId){
+  S.p2q=getQuestions(specId,50);S.p2i=0;S.p2sel=[];S.p2scores=[];
+  show('s-quiz2');renderQ(2);
+}
+
+function showResult2(){
+  const total=S.p2q.length;const score=S.p2scores.filter(Boolean).length;
+  document.getElementById('r2-score').textContent=score;
+  document.getElementById('r2-denom').textContent=` / ${total}`;
+  document.getElementById('r2-pct').textContent=`النسبة: ${Math.round(score/total*100)}%`;
+  const b=badgeFor(score,total);document.getElementById('r2-badge').innerHTML=`<span class="score-badge ${b.cls}">${b.text}</span>`;
+  buildReview(S.p2q,S.p2sel,S.p2scores,document.getElementById('r2-review'));show('s-result2');
+}
+
+function retakePhase2(){launchPhase2(S.activeSpecId||S.spec?.id||'default')}
+</script>
+</body>
+</html>
